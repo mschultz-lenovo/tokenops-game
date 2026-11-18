@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en" data-theme="light.a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Ops Challenge</title>
+<link rel="stylesheet" href="vendor/cakeand.css">
+<style>
+/* ---- Standalone shell: fits the 1600x1200 (4:3) console into any window ---- */
+html,body{height:100%;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:1200px;transform-origin:center center}
+
+/* ---- Hello PC / Cake& light.a reskin ---- */
+body{
+  margin:0;
+  background:var(--color-surfaces-canvas);
+  color:var(--color-text-icon-primary);
+  font-family:"Rookery New","Rookery",system-ui,sans-serif;
+}
+a{color:var(--color-primary-primary)}
+a:hover{color:var(--color-primary-primary-hover)}
+.disp,.mono,button{font-family:"Rookery New","Rookery",system-ui,sans-serif}
+button{color:inherit;cursor:pointer}
+.cta{
+  background:var(--color-button-primary-fill);
+  color:var(--color-button-on-primary-fill);
+  border:0;
+  border-radius:var(--radius-1000);
+  height:84px;
+  padding:0 44px;
+  font-size:30px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+}
+.cta:hover{background:var(--color-primary-primary-hover)}
+.cta:disabled{opacity:.4;cursor:not-allowed}
+.ghost{
+  background:transparent;
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  border-radius:var(--radius-200);
+  height:56px;
+  padding:0 22px;
+  font-size:19px;
+  font-weight:600;
+}
+.ghost:hover{border-color:var(--color-primary-primary)}
+.stp{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600;color:var(--color-text-icon-placeholder)}
+.stp .n{
+  width:32px;height:32px;border-radius:var(--radius-1000);
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.stp.on{color:var(--color-text-icon-primary)}
+.stp.on .n{
+  background:var(--color-button-primary-fill);
+  border-color:var(--color-button-primary-fill);
+  color:var(--color-button-on-primary-fill);
+}
+.stp.done{color:var(--color-text-icon-secondary)}
+.stp.done .n{border-color:var(--color-primary-primary);color:var(--color-primary-primary)}
+.nb{
+  width:56px;height:56px;border-radius:var(--radius-1000);
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  background:var(--color-surfaces-on-container);
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+.nb:hover{border-color:var(--color-primary-primary)}
+.nb:disabled{opacity:.3;cursor:not-allowed}
+.knob{
+  width:112px;height:112px;border-radius:var(--radius-1000);
+  background:var(--color-surfaces-on-container);
+  border:var(--stroke-300) solid var(--color-stroke-border);
+  position:relative;flex:none;
+  box-shadow:inset 0 -8px 0 var(--color-elevation-drop-shadow-heavy);
+}
+.ptr{
+  position:absolute;left:53px;top:9px;width:6px;height:38px;
+  border-radius:3px;background:var(--color-primary-primary);
+  transform-origin:3px 47px;transition:transform .25s;
+}
+.det{display:flex;gap:6px;justify-content:center;height:10px}
+.det span{width:10px;height:10px;border-radius:var(--radius-1000);background:var(--color-surfaces-on-container-high)}
+.det span.on{background:var(--color-primary-primary)}
+.tgl{
+  width:112px;height:112px;border-radius:var(--radius-400);
+  border:var(--stroke-300) solid var(--color-stroke-border);
+  background:var(--color-surfaces-on-container);
+  display:flex;align-items:center;justify-content:center;
+}
+.tgl .lev{
+  width:20px;height:52px;border-radius:10px;
+  background:var(--color-text-icon-placeholder);
+  transition:transform .2s;transform:rotate(-25deg);
+}
+.tgl.on{
+  border-color:var(--color-primary-primary);
+  background:var(--color-surfaces-primary);
+}
+.tgl.on .lev{background:var(--color-primary-primary);transform:rotate(25deg)}
+.track{
+  height:16px;border-radius:var(--radius-150);
+  background:var(--color-surfaces-on-container-low);
+  position:relative;overflow:hidden;
+}
+.fill{height:100%;border-radius:var(--radius-150);transition:width .35s}
+.donut{flex:none;display:block}
+.donut .donut-track{stroke:var(--color-surfaces-on-container-low)}
+.donut .donut-fill{transition:stroke-dasharray .35s}
+.chk{display:flex;align-items:center;gap:12px;font-size:21px;color:var(--color-text-icon-secondary)}
+.chk .b{
+  width:28px;height:28px;border-radius:var(--radius-1000);
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+.chk.ok{color:var(--color-text-icon-primary)}
+.chk.ok .b{
+  background:var(--color-button-primary-fill);
+  border-color:var(--color-button-primary-fill);
+  color:var(--color-button-on-primary-fill);
+}
+.pill{display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:var(--radius-1000);font-size:18px;font-weight:700}
+.pill.good{background:var(--color-badge-jade-light);color:var(--color-badge-text-icon-on-jade-light)}
+.pill.warn{background:var(--color-badge-amber-light);color:var(--color-badge-text-icon-on-amber-light)}
+.pill.bad{background:var(--color-badge-red-light);color:var(--color-badge-text-icon-on-red-light)}
+.pill.soon{background:var(--color-badge-amber-light);color:var(--color-badge-text-icon-on-amber-light);height:28px;padding:0 12px;font-size:14px;letter-spacing:.04em}
+.kick{font-size:18px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--color-primary-primary)}
+.cap{font-size:18px;color:var(--color-text-icon-secondary)}
+.card{
+  background:var(--color-surfaces-container);
+  border:var(--stroke-100) solid var(--color-stroke-border-container);
+  border-radius:var(--radius-400);
+}
+.dial{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;min-width:0;text-align:center;
+}
+.dial-label{
+  font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-text-icon-secondary);font-weight:700;line-height:1.25;
+}
+.dial-label-split{
+  display:inline-flex;align-items:center;justify-content:center;gap:.35em;
+  font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-text-icon-secondary);font-weight:700;line-height:1;
+}
+.dial-label-split .dial-arrow{
+  display:inline-flex;align-items:center;justify-content:center;
+  letter-spacing:0;line-height:1;font-size:1.05em;height:1em;
+}
+.dial-val{
+  font-size:26px;font-weight:700;line-height:1.25;max-width:100%;overflow:visible;white-space:normal;word-break:break-word;
+}
+.dial-row{display:flex;align-items:center;gap:14px;justify-content:center}
+.controls-row{display:flex;align-items:stretch;gap:18px}
+.tgl-panel{
+  flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;align-self:stretch;box-sizing:border-box;text-align:center;
+  background:var(--color-surfaces-container);
+  border:1px solid var(--color-stroke-border-container);
+  border-radius:26px;padding:12px 22px;min-width:220px;max-width:260px;
+}
+.tgl-panel .tgl-meta{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.metric-card{
+  height:108px;box-sizing:border-box;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0;overflow:hidden;
+}
+.metric-card .metric-body{flex:1;display:flex;align-items:center;gap:8px;min-height:0;min-width:0}
+.metric-card .metric-note{font-size:12px;line-height:1.25;white-space:normal}
+.wl{
+  background:var(--color-surfaces-container);
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  border-radius:var(--radius-400);
+  padding:26px 28px;display:flex;flex-direction:column;gap:14px;text-align:left;min-width:0;
+}
+.wl:hover{border-color:var(--color-primary-primary)}
+.wl.on{
+  border-color:var(--color-primary-primary);
+  background:var(--color-surfaces-primary);
+}
+.chip{
+  display:inline-flex;align-items:center;height:38px;padding:0 16px;
+  border-radius:var(--radius-1000);
+  border:var(--stroke-100) solid var(--color-stroke-border);
+  font-size:17px;font-weight:600;color:var(--color-text-icon-primary);
+}
+.let{
+  width:76px;height:92px;border-radius:var(--radius-200);
+  background:var(--color-surfaces-on-container);
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:700;
+  color:inherit;cursor:pointer;padding:0;
+}
+.let:hover{border-color:var(--color-primary-primary)}
+.let.on{border-color:var(--color-primary-primary);background:var(--color-surfaces-primary)}
+.let:disabled{opacity:.55;cursor:default}
+.kbd-overlay{
+  position:absolute;left:0;right:0;bottom:0;top:0;z-index:20;
+  background:rgba(0,0,0,.28);display:flex;align-items:flex-end;justify-content:center;
+  padding:0 48px 36px;box-sizing:border-box;
+}
+.kbd{
+  width:100%;max-width:1100px;background:var(--color-surfaces-container);
+  border:1px solid var(--color-stroke-border-container);border-radius:24px;
+  padding:22px 24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 -12px 40px rgba(0,0,0,.12);
+}
+.kbd-row{display:flex;justify-content:center;gap:8px}
+.kbd-key{
+  min-width:72px;height:64px;padding:0 12px;border-radius:var(--radius-200);
+  border:var(--stroke-200) solid var(--color-stroke-border);
+  background:var(--color-surfaces-on-container);color:var(--color-text-icon-primary);
+  font-family:"Rookery New","Rookery",system-ui,sans-serif;font-size:28px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.kbd-key:hover{border-color:var(--color-primary-primary)}
+.kbd-key.wide{min-width:120px;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
+.kbd-key.primary{background:var(--color-button-primary-fill);color:var(--color-button-on-primary-fill);border-color:var(--color-button-primary-fill)}
+.brand-sep{width:1px;height:22px;background:var(--color-stroke-border);margin:0 4px}
+.nvidia-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--color-text-icon-primary);opacity:.92;transition:opacity .15s}
+.nvidia-brand:hover{opacity:1;color:var(--color-text-icon-primary)}
+.nvidia-brand img{height:28px;width:auto;display:block}
+.nvidia-brand .nvidia-word{font-family:"Rookery New","Rookery",system-ui,sans-serif;font-size:18px;font-weight:700;letter-spacing:.04em}
+
+/* Chart series — Hello PC DataVis distinct tones */
+.series-cloud{background:#FF8886}
+.series-factory{background:#7586FF}
+.series-energy{background:#FB911C}
+.series-laptop{background:#00BBDF}
+.underline-cloud{border-bottom:3px solid #FF8886}
+.underline-factory{border-bottom:3px solid #7586FF}
+.underline-energy{border-bottom:3px solid #FB911C}
+.underline-laptop{border-bottom:3px solid #00BBDF}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<script>
+// =====================================================================
+// Kiosk settings (were editable props in the Design artifact).
+// Override from the URL, e.g. index.html?idleSeconds=90&resultSeconds=30&hintAfterMoves=3
+// =====================================================================
+var PROPS = { idleSeconds: 60, resultSeconds: 40, hintAfterMoves: 4 };
+(function () {
+  var q = new URLSearchParams(location.search);
+  [['idleSeconds', 15, 300], ['resultSeconds', 10, 180], ['hintAfterMoves', 1, 20]].forEach(function (d) {
+    if (q.has(d[0])) { var n = parseInt(q.get(d[0]), 10); if (!isNaN(n)) PROPS[d[0]] = Math.max(d[1], Math.min(d[2], n)); }
+  });
+})();
+
+// =====================================================================
+// Game data and math (unchanged)
+// =====================================================================
+// Illustrative economics per workload. vol = units per month; cr = cloud $ per unit; fe = factory power+ops $ per unit;
+// fc = factory headroom in units per month (on top of the 30% it already runs); lc/lf = latency (s); minM = smallest model that does the job.
+var W = [
+  { id: 'air', tag: 'Featured', who: '', task: 'Customer service chat', unit: 'chat', units: 'chats',
+    vol: [250e3, 500e3, 1e6, 1.3e6, 2e6], volL: ['250K', '500K', '1M', '1.3M', '2M'],
+    cr: [0.03, 0.10, 0.21], fe: [0.02, 0.05, 0.13], fc: [4e6, 6e5, 1.5e5], fixed: 30000,
+    lc: [0.6, 1.0, 2.2], lf: [0.3, 0.6, 1.4], minM: 1, tPer: 0.08, tLat: 1.5, tRes: 75,
+    factory: 'private AI cluster', factoryShort: 'Cluster', factoryCap: 'Cluster you own',
+    facts: [['Demand', '1M chats a month'], ['Data', 'Passenger personal data'], ['Speed', 'Fast — passengers are waiting'], ['Factory', 'Private AI cluster']] },
+  { id: 'dev', tag: 'Builders', who: 'Engineering team', task: 'Developer coding agent', unit: 'request', units: 'requests',
+    vol: [50e3, 100e3, 250e3, 500e3, 1e6], volL: ['50K', '100K', '250K', '500K', '1M'],
+    cr: [0.08, 0.25, 0.60], fe: [0.05, 0.12, 0.30], fc: [1e6, 2e5, 2e4], fixed: 4000,
+    lc: [1.0, 1.8, 4.0], lf: [0.6, 1.2, 3.0], minM: 1, tPer: 0.10, tLat: 3, tRes: 75,
+    factory: 'ThinkStation PGX', factoryShort: 'PGX', factoryCap: 'PGX at the desk',
+    facts: [['Demand', '250K requests a month'], ['Data', 'Proprietary source code'], ['Speed', 'Balanced — keep devs in flow'], ['Factory', 'ThinkStation PGX']] },
+  { id: 'sup', tag: 'Enterprise', who: 'Whole workforce', task: 'Enterprise super agent', unit: 'task', units: 'tasks',
+    vol: [100e3, 250e3, 500e3, 1e6, 2e6], volL: ['100K', '250K', '500K', '1M', '2M'],
+    cr: [0.10, 0.30, 0.90], fe: [0.03, 0.08, 0.25], fc: [1e7, 2e6, 6e5], fixed: 150000,
+    lc: [1.5, 2.5, 5.0], lf: [1.0, 1.6, 2.5], minM: 2, tPer: 0.50, tLat: 4, tRes: 75,
+    factory: 'AI factory', factoryShort: 'Factory', factoryCap: 'AI factory you own',
+    facts: [['Demand', '500K agent tasks a month'], ['Data', 'Internal company data'], ['Speed', 'Volume over speed'], ['Factory', 'Enterprise AI factory']] },
+  { id: 'clm', tag: 'Regulated', who: 'Insurance carrier', task: 'Claims review assistant', unit: 'claim', units: 'claims',
+    vol: [20e3, 50e3, 100e3, 200e3, 400e3], volL: ['20K', '50K', '100K', '200K', '400K'],
+    cr: [0.20, 0.60, 1.20], fe: [0, 0, 0], fc: [2e6, 1.5e5, 3e4], fixed: 37000,
+    lc: [2.0, 3.0, 6.0], lf: [1.5, 2.2, 4.5], minM: 1, tPer: 0.37, tLat: 6, tRes: 100,
+    factory: 'in-country AI factory', factoryShort: 'Factory', factoryCap: 'In-country factory',
+    facts: [['Demand', '100K claims a month'], ['Data', 'Sovereign — stays in-country'], ['Speed', 'Relaxed — accuracy first'], ['Factory', 'In-country AI factory']] }
+];
+var MOD_L = ['7B', '70B', '700B'];
+var CLOUD = [100, 75, 50, 25, 0];
+var BG = 0.3; // share of each factory already busy with other work
+var ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var START = 'Everything on the biggest model, in the public cloud. 70% of your own GPUs sit idle.';
+
+function money(x) { return x >= 1e6 ? '$' + (x / 1e6).toFixed(2) + 'M' : '$' + Math.round(x / 1000) + 'K'; }
+function dollars(x) { return '$' + x.toFixed(2); }
+function capitalize(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
+function whoTask(w) { return w.who ? (w.who + ' · ' + w.task) : w.task; }
+function measureKick(w) { return w.who ? ('Measure · ' + w.who) : ('Measure · ' + w.task); }
+function dialLabelHtml(label) {
+  if (label === 'Cloud ↔ Factory') {
+    return '<div class="dial-label-split"><span>Cloud</span><span class="dial-arrow" aria-hidden="true">↔</span><span>Factory</span></div>';
+  }
+  return '<div class="dial-label">' + e(label) + '</div>';
+}
+function donut(pct, color, size) {
+  var s = size || 44, r = 14, c = 2 * Math.PI * r, p = Math.max(0, Math.min(100, pct)) / 100;
+  var dash = (p * c).toFixed(2) + ' ' + c.toFixed(2);
+  return '<svg class="donut" width="' + s + '" height="' + s + '" viewBox="0 0 36 36" aria-hidden="true">' +
+    '<circle class="donut-track" cx="18" cy="18" r="' + r + '" fill="none" stroke-width="4"></circle>' +
+    '<circle class="donut-fill" cx="18" cy="18" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="4" stroke-linecap="round" stroke-dasharray="' + dash + '" transform="rotate(-90 18 18)"></circle>' +
+  '</svg>';
+}
+var STAGE_W = 1600, STAGE_H = 1200;
+function calc(w, v, m, p, t) {
+  var V = w.vol[v], cs = CLOUD[p] / 100, fs = 1 - cs, eff = t ? 0.6 : 1;
+  var cloud = V * cs * w.cr[m] * eff, energy = V * fs * w.fe[m] * eff;
+  var uw = V * fs / (w.fc[m] / eff);
+  var over = uw > 1 ? 1 + 8 * (uw - 1) : 1;
+  var lat = cs * w.lc[m] * (t ? 0.8 : 1) + fs * w.lf[m] * (t ? 0.8 : 1) * over;
+  var bill = cloud + w.fixed + energy;
+  return { V: V, cs: cs, fs: fs, cloud: cloud, energy: energy, uw: uw, u: BG + (1 - BG) * uw, lat: lat, bill: bill, per: bill / V, base: w.fixed + V * w.cr[2] };
+}
+function checks(w, s) {
+  var r = calc(w, s.v, s.m, s.p, s.t);
+  return [r.per <= w.tPer + 1e-9, r.lat <= w.tLat, r.fs * 100 >= w.tRes, s.m >= w.minM];
+}
+function won(w, s) { return checks(w, s).every(function (x) { return x; }); }
+function wins(w) {
+  var out = [];
+  for (var v = 0; v < 5; v++) for (var m = 0; m < 3; m++) for (var p = 0; p < 5; p++) for (var t = 0; t < 2; t++) {
+    var s = { v: v, m: m, p: p, t: !!t };
+    if (won(w, s)) out.push({ s: s, per: calc(w, v, m, p, !!t).per });
+  }
+  return out;
+}
+
+// =====================================================================
+// Game logic (same as the original Component; DCLogic base removed)
+// =====================================================================
+function Game(props) {
+  this.props = props;
+  this.state = { screen: 'intro', wi: 0, v: 2, m: 2, p: 0, t: false, key: null, moves: 0, last: Date.now(), initials: 'AAA', kbOpen: false, posted: false, board: [], result: null };
+}
+Game.prototype.setState = function (patch) { Object.assign(this.state, patch); render(); };
+Game.prototype.componentDidMount = function () {
+  var self = this;
+  this.timer = setInterval(function () {
+    var s = self.state;
+    if (s.screen === 'intro') return;
+    var lim = (s.screen === 'result' ? (self.props.resultSeconds ?? 40) : (self.props.idleSeconds ?? 60)) * 1000;
+    if (Date.now() - s.last > lim) self.setState({ screen: 'intro', kbOpen: false });
+  }, 1000);
+};
+Game.prototype.toPick = function () { this.setState({ screen: 'pick', kbOpen: false, last: Date.now() }); };
+Game.prototype.begin = function (wi) {
+  this.setState({ screen: 'bill', wi: wi, v: 2, m: 2, p: 0, t: false, key: null, moves: 0, last: Date.now(), initials: 'AAA', kbOpen: false, posted: false, result: null });
+};
+Game.prototype.change = function (patch, key) {
+  patch.key = key; patch.moves = this.state.moves + 1; patch.last = Date.now();
+  this.setState(patch);
+};
+Game.prototype.toResult = function () {
+  var s = this.state;
+  if (s.screen !== 'bill' || !won(W[s.wi], s)) return;
+  var r = calc(W[s.wi], s.v, s.m, s.p, s.t);
+  var best = Math.min.apply(null, wins(W[s.wi]).map(function (x) { return x.per; }));
+  this.setState({ screen: 'result', last: Date.now(), result: { r: r, score: Math.min(1000, Math.round(1000 * best / r.per)) } });
+};
+Game.prototype.knob = function (i, d) {
+  var s = this.state;
+  if (s.screen === 'intro') { this.toPick(); return; }
+  if (s.screen === 'pick') { this.setState({ wi: (s.wi + d + W.length) % W.length, last: Date.now() }); return; }
+  if (s.screen === 'result') return;
+  var key = ['v', 'm', 'p'][i], max = [4, 2, 4][i];
+  var n = Math.max(0, Math.min(max, s[key] + d));
+  if (n === s[key]) return;
+  var patch = {}; patch[key] = n;
+  this.change(patch, key);
+};
+Game.prototype.toggle = function () {
+  var s = this.state;
+  if (s.screen === 'intro') { this.toPick(); return; }
+  if (s.screen === 'pick') { this.begin(s.wi); return; }
+  if (s.screen === 'result') return;
+  this.change({ t: !s.t }, 't');
+};
+Game.prototype.openKeyboard = function () {
+  var s = this.state;
+  if (s.screen !== 'result' || s.posted) return;
+  this.setState({ kbOpen: true, initials: '', last: Date.now() });
+};
+Game.prototype.closeKeyboard = function () {
+  if (!this.state.kbOpen) return;
+  var initials = this.state.initials.length === 3 ? this.state.initials : 'AAA';
+  this.setState({ kbOpen: false, initials: initials, last: Date.now() });
+};
+Game.prototype.typeInitial = function (ch) {
+  var s = this.state;
+  if (s.screen !== 'result' || s.posted || !s.kbOpen) return;
+  ch = String(ch || '').toUpperCase();
+  if (!/^[A-Z]$/.test(ch) || s.initials.length >= 3) return;
+  this.setState({ initials: s.initials + ch, last: Date.now() });
+};
+Game.prototype.backspaceInitial = function () {
+  var s = this.state;
+  if (s.screen !== 'result' || s.posted || !s.kbOpen || !s.initials.length) return;
+  this.setState({ initials: s.initials.slice(0, -1), last: Date.now() });
+};
+Game.prototype.post = function () {
+  var s = this.state;
+  if (s.posted || !s.result || s.initials.length !== 3) return;
+  this.setState({ posted: true, kbOpen: false, last: Date.now(), board: s.board.concat([{ ini: s.initials, task: W[s.wi].task, score: s.result.score, id: Date.now() }]) });
+};
+Game.prototype.explain = function (w, s) {
+  if (won(w, s)) return 'Winning setup found. Press Success to see your score.';
+  var r = calc(w, s.v, s.m, s.p, s.t);
+  if (r.uw > 1) return 'The ' + w.factoryShort.toLowerCase() + ' is over capacity — work is queuing. Optimize, or send some back to cloud.';
+  var k = s.key;
+  if (k === 'v') return 'More ' + w.units + ', more tokens. TokenHub checks the ' + w.factoryShort.toLowerCase() + ' has room.';
+  if (k === 'm') return s.m < w.minM ? 'Cheapest tokens — but this model is too small for the job.' : (s.m > w.minM ? 'Premium tokens for work a smaller model can do.' : 'Right-sized: strong answers without paying for extra intelligence.');
+  if (k === 'p') {
+    if (w.tRes === 100 && s.p < 4) return 'Sovereign data: anything left in the public cloud breaks the rule.';
+    return s.p === 0 ? 'All cloud: every token billed, and your data leaves your walls.' : 'Work moved to your ' + w.factory + ' runs on GPUs you already own — and the data stays with you.';
+  }
+  if (k === 't') return s.t ? 'Easy requests go to smaller models; repeats come from cache. About 40% fewer tokens.' : 'Every request generated from scratch on the model you picked.';
+  return START;
+};
+Game.prototype.hint = function (w, s) {
+  // Prefer winning paths that end with TokenHub on, so that stays the last hint.
+  var all = wins(w).filter(function (x) { return x.s.t; });
+  if (!all.length) all = wins(w);
+  if (!all.length) return null;
+  var diffDials = function (x) { return (x.v !== s.v) + (x.m !== s.m) + (x.p !== s.p); };
+  all.sort(function (a, b) { return diffDials(a.s) - diffDials(b.s) || a.per - b.per; });
+  var g = all[0].s;
+  if (g.m !== s.m) return 'Turn Model size to ' + MOD_L[g.m] + '.';
+  if (g.p !== s.p) return 'Turn Cloud ↔ Factory to ' + (CLOUD[g.p] === 0 ? 'All factory' : CLOUD[g.p] + ' / ' + (100 - CLOUD[g.p])) + '.';
+  if (g.v !== s.v) return 'Set Workload volume to ' + w.volL[g.v] + ' ' + w.units + '.';
+  if (!s.t) return 'Turn TokenHub optimize on.';
+  return null;
+};
+// Event handlers in the original values object are replaced by data-act attributes in the view.
+Game.prototype.renderVals = function () {
+  var s = this.state, w = W[s.wi];
+  var r = calc(w, s.v, s.m, s.p, s.t);
+  var ck = checks(w, s);
+  var met = ck.filter(function (x) { return x; }).length;
+  var save = Math.round((1 - r.bill / r.base) * 100);
+  var up = Math.round(r.u * 100);
+  var order = ['intro', 'pick', 'bill', 'result'];
+  var cur = order.indexOf(s.screen);
+  var isWon = met === 4;
+  var hintTxt = (!isWon && s.moves >= (this.props.hintAfterMoves ?? 4)) ? this.hint(w, s) : null;
+
+  var mk = function (i, label, labels, idx, val) {
+    var n = labels.length;
+    return {
+      i: i, label: label, val: val, deg: Math.round(-135 + 270 * idx / (n - 1)),
+      atMin: s.screen === 'bill' && idx === 0, atMax: s.screen === 'bill' && idx === n - 1,
+      dots: n <= 6 ? labels.map(function (_, j) { return { cls: j === idx ? 'on' : '' }; }) : []
+    };
+  };
+  var place = CLOUD.map(function (c) { return c === 100 ? 'All cloud' : (c === 0 ? 'All factory' : c + ' / ' + (100 - c)); });
+  var knobs, tglLabel = 'TokenHub optimize', tglTxt = s.t ? 'On' : 'Off', tglOn = s.t;
+  if (s.screen === 'pick' || s.screen === 'intro') {
+    var lab = s.screen === 'pick' ? 'Browse' : 'Start';
+    knobs = [mk(0, 'Workload volume', w.volL, 2, lab), mk(1, 'Model size', MOD_L, 2, lab), mk(2, 'Cloud ↔ Factory', place, 0, lab)];
+    tglLabel = s.screen === 'pick' ? 'Choose' : 'TokenHub optimize'; tglTxt = s.screen === 'pick' ? 'Flip to choose' : 'Off'; tglOn = false;
+  } else {
+    knobs = [mk(0, 'Workload volume', w.volL, s.v, w.volL[s.v] + ' ' + w.units), mk(1, 'Model size', MOD_L, s.m, MOD_L[s.m]), mk(2, 'Cloud ↔ Factory', place, s.p, place[s.p])];
+  }
+  var activeIni = s.kbOpen ? Math.min(s.initials.length, 2) : -1;
+  var letters = [0, 1, 2].map(function (i) {
+    return { ch: s.initials[i] || '', on: i === activeIni, cls: 'let mono' + (i === activeIni ? ' on' : '') };
+  });
+
+  var goals = [
+    dollars(w.tPer) + ' or less per ' + w.unit,
+    'AI keeps up — no slow replies',
+    w.tRes === 100 ? 'All data stays in-country' : 'Most data kept in-house',
+    'Right-sized model'
+  ];
+  var sorted = s.board.slice().sort(function (a, b) { return b.score - a.score || a.id - b.id; });
+  var mine = s.board.length ? s.board[s.board.length - 1].id : null;
+  var res = s.result ? s.result.r : r;
+  var cards = W.map(function (x, i) {
+    var on = i === s.wi;
+    return { i: i, tag: x.tag, who: x.who, task: x.task, on: on, cls: 'wl' + (on ? ' on' : ''),
+      facts: x.facts.map(function (f) { return { k: f[0], v: f[1] }; }) };
+  });
+
+  return {
+    steps: ['Token 101', 'Observe', 'Optimize', 'Measure'].map(function (l, i) { return { n: i + 1, label: l, cls: 'stp' + (i === cur ? ' on' : (i < cur ? ' done' : '')) }; }),
+    isIntro: s.screen === 'intro', isPick: s.screen === 'pick', isBill: s.screen === 'bill', isResult: s.screen === 'result',
+    wlCards: cards,
+    w: w,
+    bill: money(r.bill), perUnit: dollars(r.per),
+    saveTxt: save > 0 ? save + '% lower' : (save === 0 ? 'Starting bill' : Math.abs(save) + '% higher'),
+    saveCls: 'pill ' + (save >= 50 ? 'good' : (save > 0 ? 'warn' : 'bad')),
+    cloud: money(r.cloud), fixed: money(w.fixed), energy: money(r.energy),
+    bw: { cloud: r.cloud / r.base * 100, fixed: w.fixed / r.base * 100, energy: r.energy / r.base * 100 },
+    btsKick: hintTxt ? 'TokenHub suggests' : 'Hint',
+    btsTxt: hintTxt || this.explain(w, s),
+    btsBg: hintTxt ? 'var(--color-badge-jade-light)' : 'var(--color-surfaces-on-container)', btsBorder: hintTxt ? 'var(--color-success-success)' : 'var(--color-stroke-border)', btsKickCol: hintTxt ? 'var(--color-success-success)' : 'var(--color-primary-primary)',
+    lat: r.lat.toFixed(1) + 's', latTxt: ck[1] ? 'Fast enough' : 'Too slow', latCls: 'pill ' + (ck[1] ? 'good' : (r.lat <= w.tLat * 1.6 ? 'warn' : 'bad')),
+    res: Math.round(r.fs * 100),
+    utilTxt: Math.min(up, 999) + '%', utilBar: Math.min(100, up), utilCol: r.uw > 1 ? 'var(--color-primary-primary)' : (r.u < 0.5 ? 'var(--color-warning-warn)' : 'var(--color-success-success)'),
+    utilNote: r.uw > 1 ? 'Over capacity' : (r.u < 0.5 ? Math.round((1 - r.u) * 100) + '% idle — paid for, unused' : 'Well used'),
+    qTxt: s.m < w.minM ? 'Too small' : (s.m > w.minM ? 'Overkill' : 'On target'), qCls: 'pill ' + (s.m < w.minM ? 'bad' : (s.m > w.minM ? 'warn' : 'good')),
+    goals: goals.map(function (t, i) { return { cls: 'chk' + (ck[i] ? ' ok' : ''), t: t }; }),
+    isWon: isWon,
+    goalCount: met, goalHead: isWon ? 'Winning setup. Nice work.' : 'Find the winning setup.',
+    goalBg: isWon ? 'var(--color-surfaces-primary)' : 'var(--color-surfaces-container)', goalBorder: isWon ? 'var(--color-primary-primary)' : 'var(--color-stroke-border-container)',
+    rs: {
+      save: Math.round((1 - res.bill / res.base) * 100), before: money(res.base), after: money(res.bill), score: s.result ? s.result.score : 0,
+      outs: [
+        { v: (Math.round(res.base / res.bill * 10) / 10) + '×', t: 'More AI value', c: capitalize(w.units) + ' served per dollar' },
+        { v: dollars(res.per), t: 'Spend under control', c: 'Per ' + w.unit + ', down from ' + dollars(res.base / res.V) },
+        { v: Math.round(res.u * 100) + '%', t: 'Performance at scale', c: res.lat.toFixed(1) + 's answers, GPUs at work' },
+        { v: Math.round(res.fs * 100) + '%', t: 'Right guardrails', c: 'Data kept in-house' }
+      ]
+    },
+    canPost: !s.posted,
+    canSubmit: !s.posted && s.initials.length === 3,
+    letters: letters,
+    kbOpen: s.kbOpen,
+    kbRows: [['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], ['Z', 'X', 'C', 'V', 'B', 'N', 'M']],
+    lbHint: s.posted ? 'Play again for another workload' : 'Tap the letters and type your initials',
+    board: sorted.slice(0, 5).map(function (b, i) { return { rank: i + 1, ini: b.ini, task: b.task, score: b.score, col: b.id === mine && s.posted ? 'var(--color-primary-primary)' : 'var(--color-text-icon-primary)' }; }),
+    boardEmpty: s.board.length === 0,
+    execQs: [
+      { n: '01', t: 'Where is our AI money going?' },
+      { n: '02', t: 'Which apps and workloads drive the cost?' },
+      { n: '03', t: 'How do we get the same results for less?' },
+      { n: '04', t: 'How do we prevent surprise AI spend?' },
+      { n: '05', t: 'How do we scale AI without runaway cost?' }
+    ],
+    knobs: knobs, tglLabel: tglLabel, tglTxt: tglTxt, tglOn: tglOn, tglCls: 'tgl' + (tglOn ? ' on' : ''),
+    tglComingSoon: tglLabel === 'TokenHub optimize'
+  };
+};
+
+// =====================================================================
+// View: same markup as the original template, as an HTML string
+// =====================================================================
+function e(x) { return String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function each(list, fn) { return list.map(fn).join(''); }
+var ARROW = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>';
+var HEX = function (c, sw) { return '<polygon points="12,2 21,7 21,17 12,22 3,17 3,7"></polygon><polygon points="12,8 15.5,10 15.5,14 12,16 8.5,14 8.5,10" fill="' + c + '"></polygon>'; };
+
+function viewIntro() {
+  return '<div style="flex: 1; display: flex; flex-direction: column; padding: 36px 48px 24px; gap: 30px; box-sizing: border-box; min-height: 0">' +
+    '<div style="display: flex; flex-direction: column; gap: 12px">' +
+      '<div class="kick">Token 101</div>' +
+      '<h1 class="disp" style="margin: 0; font-size: 72px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">Every AI answer has a price.<br>It\'s paid in tokens.</h1>' +
+      '<div style="font-size: 26px; color: var(--color-text-icon-secondary)">How you make tokens decides what AI costs you.</div>' +
+    '</div>' +
+    '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px">' +
+      '<div class="card" style="padding: 28px 32px; display: flex; flex-direction: column; gap: 12px">' +
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-primary)" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">' + HEX('var(--color-primary-primary)') + '</svg>' +
+        '<div class="disp" style="font-size: 32px; font-weight: 700">The token</div>' +
+        '<div class="cap" style="font-size: 21px">The unit of AI work. Every prompt and answer is counted in tokens.</div>' +
+      '</div>' +
+      '<div class="card" style="padding: 28px 32px; display: flex; flex-direction: column; gap: 12px">' +
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"></path></svg>' +
+        '<div class="disp" style="font-size: 32px; font-weight: 700">Demand · TokenHub</div>' +
+        '<div class="cap" style="font-size: 21px">Your workloads use tokens. More users and bigger models use more.</div>' +
+      '</div>' +
+      '<div class="card" style="padding: 28px 32px; display: flex; flex-direction: column; gap: 12px">' +
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-primary)" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="10" width="18" height="11" rx="1.5"></rect><path d="M3 10l5-4v4l5-4v4l5-4v4"></path><path d="M7 15h2M11 15h2M15 15h2"></path></svg>' +
+        '<div class="disp" style="font-size: 32px; font-weight: 700">Supply · Token Factory</div>' +
+        '<div class="cap" style="font-size: 21px">Your GPUs make tokens. Idle GPUs still cost you money.</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-top: auto; background: var(--color-surfaces-primary); border: 2px solid var(--color-primary-primary); border-radius: 26px; padding: 30px 40px; display: flex; align-items: center; justify-content: space-between; gap: 40px">' +
+      '<div style="display: flex; flex-direction: column; gap: 8px">' +
+        '<div class="kick">The Token Ops Challenge</div>' +
+        '<div class="disp" style="font-size: 46px; font-weight: 700; line-height: 1.05">Pick a workload. Cut its token bill.</div>' +
+        '<div style="font-size: 22px; color: var(--color-text-icon-primary)">Three knobs and a switch. Can you find the winning setup?</div>' +
+      '</div>' +
+      '<button class="cta" data-act="start" style="flex: none">Start ' + ARROW + '</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function viewPick(v) {
+  return '<div style="flex: 1; display: flex; flex-direction: column; padding: 32px 48px 24px; gap: 26px; box-sizing: border-box; min-height: 0">' +
+    '<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">' +
+      '<div style="display: flex; flex-direction: column; gap: 8px">' +
+        '<div class="kick">Observe</div>' +
+        '<h1 class="disp" style="margin: 0; font-size: 56px; font-weight: 700; letter-spacing: -0.02em; line-height: 1">Pick a workload</h1>' +
+      '</div>' +
+      '<div style="font-size: 24px; color: var(--color-text-icon-secondary)">Tap a workload, then run it.</div>' +
+    '</div>' +
+    '<div style="flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; min-height: 0">' +
+      each(v.wlCards, function (c) {
+        return '<button class="' + c.cls + '" data-act="pick" data-i="' + c.i + '" aria-pressed="' + c.on + '">' +
+          '<span class="pill good" style="align-self: flex-start">' + e(c.tag) + '</span>' +
+          '<span style="display: flex; flex-direction: column; gap: 4px">' +
+            (c.who ? '<span style="font-size: 19px; color: var(--color-text-icon-secondary); font-weight: 600">' + e(c.who) + '</span>' : '') +
+            '<span class="disp" style="font-size: 34px; font-weight: 700; line-height: 1.1">' + e(c.task) + '</span>' +
+          '</span>' +
+          '<span style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--color-stroke-border-container); padding-top: 16px; width: 100%">' +
+            each(c.facts, function (f) {
+              return '<span style="display: flex; flex-direction: column; gap: 2px">' +
+                '<span style="font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-icon-placeholder); font-weight: 700">' + e(f.k) + '</span>' +
+                '<span style="font-size: 20px">' + e(f.v) + '</span>' +
+              '</span>';
+            }) +
+          '</span>' +
+        '</button>';
+      }) +
+    '</div>' +
+    '<div style="display: flex; justify-content: flex-end">' +
+      '<button class="cta" data-act="confirm">Run this workload ' + ARROW + '</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function viewBill(v) {
+  var w = v.w;
+  return '<div style="flex: 1; display: flex; flex-direction: column; padding: 24px 48px 16px; gap: 18px; box-sizing: border-box; min-height: 0">' +
+    '<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 32px">' +
+      '<div style="display: flex; flex-direction: column; gap: 6px">' +
+        '<div class="kick">' + e(whoTask(w)) + '</div>' +
+        '<h1 class="disp" style="margin: 0; font-size: 48px; font-weight: 700; letter-spacing: -0.02em; line-height: 1">Your monthly token bill</h1>' +
+      '</div>' +
+      '<div style="font-size: 22px; color: var(--color-text-icon-secondary)">Turn the knobs. Watch the bill.</div>' +
+    '</div>' +
+    '<div style="flex: 1; display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 0.85fr); gap: 18px; min-height: 0">' +
+      '<div style="display: flex; flex-direction: column; gap: 16px; min-width: 0; min-height: 0">' +
+        '<div class="card" style="padding: 28px 36px; display: flex; flex-direction: column; gap: 18px; min-width: 0; flex: none">' +
+          '<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px">' +
+            '<div class="mono" style="font-size: 96px; font-weight: 700; line-height: 1; letter-spacing: -0.03em">' + e(v.bill) + '</div>' +
+            '<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; padding-top: 6px">' +
+              '<span class="' + v.saveCls + '" style="font-size: 24px; height: 46px; padding: 0 22px; border-radius: 23px">' + e(v.saveTxt) + '</span>' +
+              '<div class="cap" style="font-size: 22px"><span class="mono" style="color: var(--color-text-icon-primary); font-weight: 700">' + e(v.perUnit) + '</span> per ' + e(w.unit) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="display: flex; height: 52px; border-radius: var(--radius-200); overflow: hidden; background: var(--color-surfaces-on-container-low)">' +
+            '<div style="width: ' + v.bw.cloud + '%; background: #FF8886; transition: width .35s"></div>' +
+            '<div style="width: ' + v.bw.fixed + '%; background: #7586FF; transition: width .35s"></div>' +
+            '<div style="width: ' + v.bw.energy + '%; background: #FB911C; transition: width .35s"></div>' +
+          '</div>' +
+          '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">' +
+            '<div style="display: flex; flex-direction: column; gap: 4px; border-top: 6px solid #FF8886; padding-top: 12px">' +
+              '<div class="mono" style="font-size: 36px; font-weight: 700">' + e(v.cloud) + '</div><div class="cap">Cloud tokens</div>' +
+            '</div>' +
+            '<div style="display: flex; flex-direction: column; gap: 4px; border-top: 6px solid #7586FF; padding-top: 12px">' +
+              '<div class="mono" style="font-size: 36px; font-weight: 700">' + e(v.fixed) + '</div><div class="cap">' + e(w.factoryCap) + '</div>' +
+            '</div>' +
+            '<div style="display: flex; flex-direction: column; gap: 4px; border-top: 6px solid #FB911C; padding-top: 12px">' +
+              '<div class="mono" style="font-size: 36px; font-weight: 700">' + e(v.energy) + '</div><div class="cap">Factory power</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; flex: none; height: 108px">' +
+          '<div class="card metric-card">' +
+            '<div class="cap" style="font-size: 14px">AI response time</div>' +
+            '<div class="metric-body" style="justify-content: space-between">' +
+              '<span class="mono" style="font-size: 26px; font-weight: 700; line-height: 1">' + e(v.lat) + '</span>' +
+              '<span class="' + v.latCls + '" style="font-size: 13px; height: 26px; padding: 0 10px">' + e(v.latTxt) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="card metric-card">' +
+            '<div class="cap" style="font-size: 14px">Data kept in-house</div>' +
+            '<div class="metric-body"><span class="mono" style="font-size: 26px; font-weight: 700; line-height: 1">' + v.res + '%</span></div>' +
+          '</div>' +
+          '<div class="card metric-card">' +
+            '<div class="cap" style="font-size: 14px">' + e(w.factoryShort) + ' GPU use</div>' +
+            '<div class="metric-body">' +
+              donut(v.utilBar, v.utilCol, 36) +
+              '<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">' +
+                '<span class="mono" style="font-size: 26px; font-weight: 700; line-height: 1">' + e(v.utilTxt) + '</span>' +
+                '<span class="cap metric-note">' + e(v.utilNote) + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="card metric-card">' +
+            '<div class="cap" style="font-size: 14px">Answer quality</div>' +
+            '<div class="metric-body"><span class="' + v.qCls + '" style="font-size: 14px; height: 28px; padding: 0 12px; border-radius: 14px">' + e(v.qTxt) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="background: ' + v.goalBg + '; border: 2px solid ' + v.goalBorder + '; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0; overflow: hidden; box-sizing: border-box">' +
+        '<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex: none">' +
+          '<div class="kick" style="font-size: 15px">Your mission</div>' +
+          '<div class="mono" style="font-size: 20px; color: var(--color-text-icon-secondary)">' + v.goalCount + ' / 4</div>' +
+        '</div>' +
+        '<div class="disp" style="font-size: 24px; font-weight: 700; line-height: 1.25; flex: none">' + e(v.goalHead) + '</div>' +
+        '<div style="display: flex; flex-direction: column; gap: 8px; flex: none">' +
+          each(v.goals, function (g) {
+            return '<div class="' + g.cls + '" style="align-items: flex-start; font-size: 18px"><span class="b" style="margin-top: 2px; width: 24px; height: 24px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-button-on-primary-fill)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><span style="line-height: 1.3; white-space: normal">' + e(g.t) + '</span></div>';
+          }) +
+        '</div>' +
+        (v.isWon ?
+          '<button class="cta" data-act="success" style="margin-top: auto; flex: none; width: 100%; height: 72px; font-size: 26px; justify-content: center; box-sizing: border-box">Success ' + ARROW + '</button>' :
+          '<div style="margin-top: auto; flex: none; background: ' + v.btsBg + '; border: 1px solid ' + v.btsBorder + '; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px">' +
+            '<div class="kick" style="font-size: 13px; color: ' + v.btsKickCol + '">' + e(v.btsKick) + '</div>' +
+            '<div style="font-size: 18px; line-height: 1.35; white-space: normal">' + e(v.btsTxt) + '</div>' +
+          '</div>') +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function viewKeyboard(v) {
+  if (!v.kbOpen) return '';
+  return '<div class="kbd-overlay" data-act="kb-dismiss">' +
+    '<div class="kbd" data-act="kb-keep">' +
+      '<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px">' +
+        '<div class="kick" style="font-size: 14px">Type your initials</div>' +
+        '<div style="display: flex; gap: 10px">' +
+          each(v.letters, function (l) { return '<div class="' + l.cls + '" style="width: 56px; height: 64px; font-size: 36px; pointer-events: none">' + e(l.ch || '·') + '</div>'; }) +
+        '</div>' +
+      '</div>' +
+      each(v.kbRows, function (row) {
+        return '<div class="kbd-row">' + each(row, function (ch) {
+          return '<button class="kbd-key" type="button" data-act="kb-key" data-ch="' + ch + '">' + ch + '</button>';
+        }) + '</div>';
+      }) +
+      '<div class="kbd-row">' +
+        '<button class="kbd-key wide" type="button" data-act="kb-back">Delete</button>' +
+        '<button class="kbd-key wide primary" type="button" data-act="kb-done">Done</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function viewResult(v) {
+  var w = v.w, rs = v.rs;
+  return '<div style="flex: 1; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 22px; padding: 24px 48px 24px; box-sizing: border-box; min-height: 0; position: relative">' +
+    '<div style="display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-width: 0; min-height: 0">' +
+      '<div style="display: flex; flex-direction: column; gap: 14px; flex: none">' +
+        '<div class="kick">' + e(measureKick(w)) + '</div>' +
+        '<h1 class="disp" style="margin: 0; font-size: 56px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">You cut the bill by ' + rs.save + '%.</h1>' +
+      '</div>' +
+      '<div style="display: flex; align-items: center; gap: 28px; flex: none">' +
+        '<div style="display: flex; flex-direction: column; gap: 6px">' +
+          '<div class="cap">Where you started</div>' +
+          '<div class="mono" style="font-size: 56px; font-weight: 700; color: var(--color-text-icon-placeholder); text-decoration: line-through; line-height: 1">' + e(rs.before) + '</div>' +
+        '</div>' +
+        '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"></path></svg>' +
+        '<div style="display: flex; flex-direction: column; gap: 6px">' +
+          '<div class="cap">Your setup</div>' +
+          '<div class="mono" style="font-size: 80px; font-weight: 700; line-height: 1">' + e(rs.after) + '</div>' +
+        '</div>' +
+        '<div style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px">' +
+          '<div class="cap">Score vs. TokenHub\'s best</div>' +
+          '<div class="mono" style="font-size: 56px; font-weight: 700; color: var(--color-primary-primary); line-height: 1">' + rs.score + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; flex: 1; align-content: stretch; min-height: 0">' +
+        each(rs.outs, function (o) {
+          return '<div class="card" style="padding: 22px 24px; display: flex; align-items: center; gap: 18px; min-height: 0">' +
+            '<div class="mono" style="font-size: 36px; font-weight: 700; color: var(--color-primary-primary); min-width: 110px">' + e(o.v) + '</div>' +
+            '<div style="display: flex; flex-direction: column; gap: 4px">' +
+              '<div class="disp" style="font-size: 22px; font-weight: 700">' + e(o.t) + '</div>' +
+              '<div class="cap" style="font-size: 16px">' + e(o.c) + '</div>' +
+            '</div>' +
+          '</div>';
+        }) +
+      '</div>' +
+      '<div style="flex: none; font-size: 14px; color: var(--color-text-icon-placeholder)">The right workload, on the right model, on the right infrastructure, at the right cost. · Illustrative scenarios, not validated customer results.</div>' +
+    '</div>' +
+    '<div style="display: flex; flex-direction: column; gap: 18px; min-width: 0; min-height: 0">' +
+      '<div style="flex: 1; background: var(--color-surfaces-primary); border: 2px solid var(--color-primary-primary); border-radius: 24px; padding: 22px 28px; display: flex; flex-direction: column; gap: 12px; min-height: 0">' +
+        '<div class="disp" style="font-size: 30px; font-weight: 700; line-height: 1.1">Now see TokenHub do it live.</div>' +
+        '<div style="display: flex; flex-direction: column; gap: 6px">' +
+          each(v.execQs, function (q) {
+            return '<div style="display: flex; gap: 12px; font-size: 18px; line-height: 1.3"><span class="mono" style="color: var(--color-primary-primary); font-weight: 700">' + q.n + '</span><span>' + e(q.t) + '</span></div>';
+          }) +
+        '</div>' +
+        '<div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px">' +
+          '<span class="chip">Spend by app and user</span><span class="chip">Request-level tracing</span><span class="chip">Model routing</span><span class="chip">Budgets and alerts</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card" style="flex: none; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">' +
+        '<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">' +
+          '<div class="kick" style="font-size: 15px">Leaderboard</div>' +
+          '<div class="cap" style="font-size: 14px; text-align: right">' + e(v.lbHint) + '</div>' +
+        '</div>' +
+        '<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">' +
+          each(v.letters, function (l) {
+            return '<button class="' + l.cls + '" type="button" data-act="kb-open" aria-label="Enter initials" style="width: 64px; height: 76px; font-size: 42px"' + (v.canPost ? '' : ' disabled') + '>' + e(l.ch || '·') + '</button>';
+          }) +
+          (v.canPost ?
+            '<button class="cta" style="height: 76px; margin-left: auto; padding: 0 22px; font-size: 22px" data-act="post"' + (v.canSubmit ? '' : ' disabled') + '>Post</button>' :
+            '<button class="cta" style="height: 76px; margin-left: auto; padding: 0 18px; font-size: 20px" data-act="again">Play again ' + ARROW + '</button>') +
+        '</div>' +
+        '<div style="display: flex; flex-direction: column; gap: 4px">' +
+          each(v.board, function (b) {
+            return '<div style="display: grid; grid-template-columns: 28px 64px minmax(0, 1fr) 58px; gap: 8px; align-items: center; font-size: 17px; padding: 4px 0; border-bottom: 1px solid var(--color-surfaces-on-container-low); color: ' + b.col + '">' +
+              '<span class="mono">' + b.rank + '</span><span class="mono" style="font-weight: 700">' + e(b.ini) + '</span>' +
+              '<span style="font-size: 14px; color: var(--color-text-icon-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">' + e(b.task) + '</span>' +
+              '<span class="mono" style="font-weight: 700; text-align: right">' + b.score + '</span>' +
+            '</div>';
+          }) +
+          (v.boardEmpty ? '<div class="cap">Be the first on the board.</div>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    viewKeyboard(v) +
+  '</div>';
+}
+
+function viewControls(v) {
+  return '<div class="controls-row" style="flex: none; margin: 0 48px 28px">' +
+    '<div style="flex: 1; display: flex; align-items: flex-start; gap: 12px; background: var(--color-surfaces-container); border: 1px solid var(--color-stroke-border-container); border-radius: 26px; padding: 14px 28px; min-width: 0; box-sizing: border-box">' +
+      each(v.knobs, function (k) {
+        return '<div class="dial">' +
+          dialLabelHtml(k.label) +
+          '<div class="dial-row">' +
+            '<button class="nb" data-act="dec" data-i="' + k.i + '"' + (k.atMin ? ' disabled' : '') + ' aria-label="Turn ' + e(k.label) + ' left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>' +
+            '<div style="display: flex; flex-direction: column; align-items: center; gap: 8px">' +
+              '<div class="knob" aria-hidden="true"><div class="ptr" style="transform: rotate(' + k.deg + 'deg)"></div></div>' +
+              '<div class="det" aria-hidden="true">' + each(k.dots, function (d) { return '<span class="' + d.cls + '"></span>'; }) + '</div>' +
+            '</div>' +
+            '<button class="nb" data-act="inc" data-i="' + k.i + '"' + (k.atMax ? ' disabled' : '') + ' aria-label="Turn ' + e(k.label) + ' right"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg></button>' +
+          '</div>' +
+          '<div class="disp dial-val">' + e(k.val) + '</div>' +
+        '</div>';
+      }) +
+    '</div>' +
+    '<div class="tgl-panel">' +
+      '<div class="tgl-meta">' +
+        '<div class="dial-label" style="letter-spacing: 0.12em">' + e(v.tglLabel) + '</div>' +
+        (v.tglComingSoon ? '<span class="pill soon">Coming soon!</span>' : '') +
+      '</div>' +
+      '<button class="' + v.tglCls + '" data-act="flip" aria-pressed="' + v.tglOn + '" aria-label="' + e(v.tglLabel) + '"><span class="lev"></span></button>' +
+      '<div class="disp dial-val" style="font-size: 22px">' + e(v.tglTxt) + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function view(v) {
+  return '<div style="width: ' + STAGE_W + 'px; height: ' + STAGE_H + 'px; box-sizing: border-box; background: var(--color-surfaces-canvas); color: var(--color-text-icon-primary); font-family: "Rookery New", "Rookery", system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">' +
+    '<div style="flex: none; height: 76px; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-surfaces-on-container-low)">' +
+      '<div style="display: flex; align-items: center; gap: 14px">' +
+        '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-primary)" stroke-width="2" stroke-linejoin="round" aria-hidden="true">' + HEX('var(--color-primary-primary)') + '</svg>' +
+        '<span class="disp" style="font-size: 26px; font-weight: 700">Token Ops Challenge</span>' +
+        '<span class="brand-sep" aria-hidden="true"></span>' +
+        '<a class="nvidia-brand" href="https://www.nvidia.com/" target="_blank" rel="noopener noreferrer" aria-label="NVIDIA">' +
+          '<img src="assets/nvidia-mark.png" alt="" width="43" height="28">' +
+          '<span class="nvidia-word">NVIDIA</span>' +
+        '</a>' +
+      '</div>' +
+      '<div style="display: flex; align-items: center; gap: 36px">' +
+        each(v.steps, function (p) { return '<div class="' + p.cls + '"><span class="n mono">' + p.n + '</span><span>' + e(p.label) + '</span></div>'; }) +
+      '</div>' +
+    '</div>' +
+    (v.isIntro ? viewIntro() : '') +
+    (v.isPick ? viewPick(v) : '') +
+    (v.isBill ? viewBill(v) : '') +
+    (v.isResult ? viewResult(v) : '') +
+    (v.isBill ? viewControls(v) : '') +
+  '</div>';
+}
+
+// =====================================================================
+// Tiny DOM patcher: keeps existing elements so CSS transitions
+// (knob pointer, bars, toggle lever) animate exactly as before.
+// =====================================================================
+function syncAttrs(f, t) {
+  for (var i = f.attributes.length - 1; i >= 0; i--) { var n = f.attributes[i].name; if (!t.hasAttribute(n)) f.removeAttribute(n); }
+  for (var j = 0; j < t.attributes.length; j++) { var a = t.attributes[j]; if (f.getAttribute(a.name) !== a.value) f.setAttribute(a.name, a.value); }
+}
+function patch(from, to) {
+  var b = Array.prototype.slice.call(to.childNodes);
+  for (var i = 0; i < b.length; i++) {
+    var f = from.childNodes[i], t = b[i];
+    if (!f) { from.appendChild(t); continue; }
+    if (f.nodeType !== t.nodeType || f.nodeName !== t.nodeName) { from.replaceChild(t, f); continue; }
+    if (f.nodeType !== 1) { if (f.nodeValue !== t.nodeValue) f.nodeValue = t.nodeValue; continue; }
+    syncAttrs(f, t); patch(f, t);
+  }
+  while (from.childNodes.length > b.length) from.removeChild(from.lastChild);
+}
+
+var stage = document.getElementById('stage');
+var game = new Game(PROPS);
+function render() {
+  var tpl = document.createElement('template');
+  tpl.innerHTML = view(game.renderVals());
+  patch(stage, tpl.content);
+}
+
+// Event delegation (replaces the original onClick bindings)
+stage.addEventListener('click', function (ev) {
+  var el = ev.target.closest('[data-act]');
+  if (!el || el.disabled) return;
+  var act = el.getAttribute('data-act');
+  if (act === 'kb-keep') { ev.stopPropagation(); return; }
+  var i = +el.getAttribute('data-i');
+  switch (act) {
+    case 'start': game.toPick(); break;
+    case 'pick': game.setState({ wi: i, last: Date.now() }); break;
+    case 'confirm': game.begin(game.state.wi); break;
+    case 'success': game.toResult(); break;
+    case 'post': game.post(); break;
+    case 'again': game.toPick(); break;
+    case 'kb-open': game.openKeyboard(); break;
+    case 'kb-done':
+    case 'kb-dismiss': game.closeKeyboard(); break;
+    case 'kb-key': game.typeInitial(el.getAttribute('data-ch')); break;
+    case 'kb-back': game.backspaceInitial(); break;
+    case 'dec': game.knob(i, -1); break;
+    case 'inc': game.knob(i, 1); break;
+    case 'flip': game.toggle(); break;
+  }
+});
+
+document.addEventListener('keydown', function (ev) {
+  if (!game.state.kbOpen || game.state.screen !== 'result') return;
+  if (ev.key === 'Escape') { game.closeKeyboard(); ev.preventDefault(); return; }
+  if (ev.key === 'Backspace') { game.backspaceInitial(); ev.preventDefault(); return; }
+  if (ev.key === 'Enter') { game.closeKeyboard(); ev.preventDefault(); return; }
+  if (/^[a-zA-Z]$/.test(ev.key)) { game.typeInitial(ev.key); ev.preventDefault(); }
+});
+
+// Scale the fixed 1600x1200 (4:3) console to fit the window
+function fit() {
+  var s = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+  stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+}
+window.addEventListener('resize', fit);
+fit();
+render();
+game.componentDidMount();
+</script>
+</body>
+</html>

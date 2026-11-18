@@ -1,0 +1,52 @@
+{
+  "name": "@cake-admin/cakeand",
+  "version": "4.3.0",
+  "description": "hello pc design system — React components, tokens, and theming.",
+  "homepage": "https://cake.lenovo.com",
+  "license": "UNLICENSED",
+  "private": false,
+  "type": "module",
+  "sideEffects": [
+    "*.css",
+    "./index.js"
+  ],
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./index.js"
+    },
+    "./cakeand.css": "./cakeand.css",
+    "./assets/*": "./assets/*",
+    "./stories/*": "./stories/*",
+    "./context/*": "./context/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "index.js.map",
+    "types",
+    "cakeand.css",
+    "assets",
+    "stories",
+    "context",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "styled-components": ">=6",
+    "radix-ui": ">=1.6",
+    "lucide-react": ">=0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cake-admin/cakev2.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  }
+}
