@@ -1,0 +1,434 @@
+Contract assistant
+Running in an NVIDIA OpenShell sandbox on a Lenovo RTX Spark laptop
+Policy: finance-standard Illustrative figures
+USER 0417 · FINANCE
+Review the attached supplier contract and draft a reply that flags anything
+unusual in the renewal terms.
+HOW THE ASSISTANT WORKED
+Read the contract On the device · small Nemotron model
+Find the renewal and price clauses On the device · small Nemotron model
+Compare the terms with company policy and flag risks Data center · larger Nemotron model on xIQ
+Draft the reply On the device · small Nemotron model
+ASSISTANT
+Your draft reply is ready. Two items to flag: the contract renews automatically for three
+years, and prices can rise each year without notice. Suggested wording is in the draft.
+RECEIPT Lenovo xIQ TokenOps
+4¢This answer
+Tokens on the device 75%
+Tokens in the data center 25%
+Monthly budget used 38%
+Employee: User 0417
+Team: Finance
+Assistant: Contract assistant
+TokenOps counts tokens only. It never reads
+prompts or answers.
+
+-- 1 of 11 --
+
+LENOVO XIQ TOKENOPS
+Assistant spend · 100,000 employees · This month Simulated company · Illustrative figures
+Organization › Finance › User 0417
+$1.4M
+Assistant spend this month
+$14
+Cost per employee per month
+30%
+Simple tasks handled on the device
+40%
+Spend from the top 2% of employees
+(2,000 people)
+SPEND BY TEAM
+Engineering 34%
+Customer support 22%
+Sales 16%
+Finance 11%
+Legal 9%
+Everyone else 8%
+WHERE TASKS RUN
+On the device 30% Data center 70%
+Most simple tasks still run on the
+largest model.
+And 2% of employees drive 40% of the
+spend.
+Set a policy
+
+-- 2 of 11 --
+
+LENOVO XIQ TOKENOPS
+One policy for every employee Projection · Illustrative figures
+NEW POLICY
+Applies to
+All 100,000 employees
+Monthly limit per employee
+Alert the employee at
+Send simple tasks to the device
+Enforced on every assistant through NVIDIA
+OpenShell policy.
+Apply policy
+PROJECTED RESULT
+Simple tasks handled on the device 30% → 70%
+Spend from the top 2% of employees 40% → 15%
+Cost per employee per month $14 → $8
+Assistant spend per month $1.4M → $0.8M
+Every employee keeps their assistant. Projection on illustrative figures; automatic limits and routing are on the roadmap.
+OpenShell controls what every assistant can do. TokenOps controls what it can spend.
+
+-- 3 of 11 --
+
+LENOVO × NVIDIA · TECH WORLD, 6 JANUARY
+Stage storyboard: four frames, about three minutes Draft lines for the presenters · Illustrative figures
+1 · One employee Live
+RECEIPT
+4¢
+75% on device
+38% of budget
+ON THE BIG SCREEN
+The laptop screen. The assistant works through
+a contract, step by step, then the receipt
+appears.
+PRESENTER
+“Every employee here has an assistant. Here is
+what one answer actually costs: four cents, and
+most of the work never left the laptop.”
+HOW IT RUNS
+Real assistant and models, on an RTX Spark laptop
+and xIQ
+2 · Zoom out Prepared data
+$1.4M $14 30% 40%
+ON THE BIG SCREEN
+TokenOps pulls back to 100,000 employees,
+then drills from the organization to one team
+and one person.
+PRESENTER
+“Now the whole company. Two percent of people
+drive forty percent of the spend, and simple work
+still goes to the biggest model.”
+HOW IT RUNS
+Live dashboard on a simulated company, with the
+presenter’s own request in it
+3 · One policy Presenter-driven
+On the device 30% → 70%
+Top 2% of spend 40% → 15%
+Per employee $14 → $8
+ON THE BIG SCREEN
+A limit for every employee, and simple tasks
+sent to the device. The presenter applies it and
+the numbers move.
+PRESENTER
+“One policy. Every employee keeps their
+assistant, and the cost per employee drops from
+fourteen dollars a month to eight.”
+HOW IT RUNS
+Policy set on screen; the result is a prepared
+projection
+4 · The close Title card
+OpenShell controls what every
+assistant can do.
+TokenOps controls what it can
+spend.
+ON THE BIG SCREEN
+The two lines, with Lenovo and NVIDIA
+together.
+PRESENTER
+“Every assistant gets a sandbox, a budget and a
+receipt. From the laptop to the data center, on
+Lenovo and NVIDIA.”
+HOW IT RUNS
+Title card
+Backup: a recorded run of the same flow, cued by the stage manager if the live demo fails.
+
+-- 4 of 11 --
+
+Employee asks their assistant to do a task
+Assistant in an NVIDIA OpenShell sandbox
+NemoClaw routes each task; policy sets what the
+assistant can do
+Small Nemotron model
+simple tasks, on the device
+Usage agent
+sends token counts to TokenOps, never prompts or
+answers
+Larger Nemotron model
+complex tasks, hosted on xIQ and ThinkSystem
+Lenovo xIQ TokenOps
+cost per team, employee and assistant; budgets and
+limits
+Employee
+their own receipt and budget
+IT and finance
+spend by team and person,
+with drill-down
+How it works: from the laptop to the data center
+OpenShell controls what every assistant can do. TokenOps controls what it can spend.
+AT THE DESK · LENOVO RTX SPARK LAPTOP DATA CENTER · LENOVO XIQ ON THINKSYSTEM WHO SEES THE COST
+simple tasks
+complex tasks
+limits
+(to build)
+token counts only
+token counts
+Aligned with the NVIDIA OpenShell reference architecture. Everything stays inside the company. The dashed line, limits set in TokenOps and enforced through OpenShell, is to be built with NVIDIA.
+
+-- 5 of 11 --
+
+TokenOps Challenge 1 Token 101 2 Observe 3 Optimize 4 Measure
+OBSERVE
+Pick a workload Turn a knob to browse. Flip the switch to choose.
+Featured
+Brightsky Airlines
+Customer service
+chat
+DEMAND
+1M chats a month
+DATA
+Passenger personal data
+SPEED
+Fast — passengers are waiting
+FACTORY
+Private AI cluster
+Builders
+Engineering team
+Developer coding
+agent
+DEMAND
+250K requests a month
+DATA
+Proprietary source code
+SPEED
+Balanced — keep devs in flow
+FACTORY
+ThinkStation PGX
+Enterprise
+Whole workforce
+Enterprise super
+agent
+DEMAND
+500K agent tasks a month
+DATA
+Internal company data
+SPEED
+Volume over speed
+FACTORY
+Enterprise AI factory
+Regulated
+Insurance carrier
+Claims review
+assistant
+DEMAND
+100K claims a month
+DATA
+Sovereign — stays in-country
+SPEED
+Relaxed — accuracy first
+FACTORY
+In-country AI factory
+Hybrid · New
+Every employee
+A personal AI
+assistant for
+everyone
+DEMAND
+100K employees, all day
+DATA
+Work and personal data — stays
+inside the company
+SPEED
+Instant for simple tasks, thorough
+for hard ones
+FACTORY
+RTX Spark laptops and the
+enterprise AI factory
+Run this workload →
+WORKLOAD VOLUME
+Browse
+MODEL SIZE
+Browse
+LAPTOP ↔ FACTORY ↔
+CLOUD
+Browse
+CHOOSE
+Flip to choose
+
+-- 6 of 11 --
+
+TokenOps Challenge 1 Token 101 2 Observe 3 Optimize 4 Measure
+EVERY EMPLOYEE · PERSONAL AI ASSISTANT
+Your monthly token bill Turn the knobs. Watch the bill.
+$1.4M Starting bill
+$14 per employee
+$1.0M
+Cloud tokens
+$0.4M
+Factory you own
+$0
+Factory power
+$0
+Laptops
+BEHIND THE SCENES
+Every task goes to the biggest model in the public cloud. 2% of employees drive 40% of the
+spend, the factory you own sits mostly idle and the laptops do nothing.
+AI response time
+2.4s Too slow
+Data kept in-house
+0%
+Spend from the top
+2% 40%
+2,000 people, no budgets
+Answer quality
+Overkill
+YOUR MISSION 0 / 4
+Find the winning setup.
+$8 or less per employee a month
+70% of simple tasks on the laptop
+Top 2% under 20% of spend
+Every employee keeps their assistant
+WORKLOAD VOLUME
+100K employees
+MODEL SIZE
+700B
+LAPTOP ↔ FACTORY ↔
+CLOUD
+All cloud
+TOKENOPS OPTIMIZE
+Off
+Illustrative figures. Every assistant runs in an NVIDIA OpenShell sandbox, which controls what it can do.
+
+-- 7 of 11 --
+
+TokenOps Challenge 1 Token 101 2 Observe 3 Optimize 4 Measure
+EVERY EMPLOYEE · PERSONAL AI ASSISTANT
+Your monthly token bill See your receipt →
+$0.8M $1.4M
+Winning setup
+$8 per employee
+$0
+Cloud tokens
+$0.4M
+Factory you own
+$0.25M
+Factory power
+$0.15M
+Laptops
+BEHIND THE SCENES
+Simple tasks run on a small model on the laptop; hard reasoning goes to 70B in the factory you
+already own. A budget on every assistant caps the heaviest users, and every employee keeps
+their assistant.
+AI response time
+0.6s Fast
+Data kept in-house
+100%
+Spend from the top 2%15%
+A budget on every assistant
+Answer quality
+Right-sized
+YOUR MISSION 4 / 4
+Winning setup found.
+✓ $8 or less per employee a month
+✓ 70% of simple tasks on the laptop
+✓ Top 2% under 20% of spend
+✓ Every employee keeps their assistant
+WORKLOAD VOLUME
+100K employees
+MODEL SIZE
+Small + 70B
+LAPTOP ↔ FACTORY ↔
+CLOUD
+70% on the laptop
+TOKENOPS OPTIMIZE
+On
+Budgets and routing · on the
+roadmap
+Illustrative figures. Every assistant runs in an NVIDIA OpenShell sandbox, which controls what it can do.
+
+-- 8 of 11 --
+
+TokenOps Challenge 1 Token 101 2 Observe 3 Optimize 4 Measure
+MEASURE · WORKLOAD 5
+Every assistant gets a sandbox,
+a budget and a receipt.
+YOUR RECEIPT One answer · User 0417
+4¢
+Tokens on the laptop 75%
+Monthly budget used 38%
+TokenOps counts tokens, never prompts or answers.
+THE WHOLE COMPANY · 100,000 EMPLOYEES
+Simple tasks on the laptop 30% → 70%
+Spend from the top 2% of employees 40% → 15%
+Cost per employee per month $14 → $8
+Monthly token bill $1.4M → $0.8M
+The lesson: simple work at the desk, hard work in the factory, and a budget on every assistant. The bill drops 43% and nobody loses their
+assistant. Turning volume down never wins.
+Illustrative figures. Budgets per employee and routing are on the TokenOps roadmap.
+
+-- 9 of 11 --
+
+Five workloads, five lessons
+Workload Factory Starting
+bill Winning setup The lesson
+Brightsky Airlines ·
+customer chat Private AI cluster $240K 70B · 25/75 or all factory · on Right-size the model; use the cluster you own
+Engineering team · coding
+agent ThinkStation PGX $154K 70B · all on the PGX · on Experimentation belongs at the desk
+Whole workforce · super
+agent Enterprise AI factory $600K 700B · all factory · on Frontier is justified; keep your GPUs busy
+Insurance carrier · claims In-country AI factory $205K 70B · all factory · on Sovereign: 100% stays in-country
+NEW
+Every employee ·
+personal AI assistant
+RTX Spark laptops and the
+enterprise AI factory $1.4M Small + 70B · 70% of simple
+tasks on the laptop · on
+Simple work at the desk, hard work in the
+factory; a budget on every assistant
+The assistant story: at 100,000 employees, sending simple tasks to the laptop and putting a budget on every assistant takes the bill from
+$1.4M to $0.8M a month, and every employee keeps their assistant.
+Rows 1 to 4 as in Product Marketing’s current table. Row 5 figures are illustrative and use 100,000 employees at $14 each a month.
+
+-- 10 of 11 --
+
+FF-01 Assistant at work
+Request, four steps, reply
+Concept: sandbox label, device
+chips, laptop frame
+FF-02 Receipt
+4¢ this answer, 38% of budget,
+employee and team
+Concept: device and data-
+center split
+FF-03 Organization view
+$1.4M, $14 per employee, top
+2% at 40%
+Concept: on-device tile, where
+tasks run
+FF-05 Policy
+$60 limit, 80% alert, simple
+tasks to a smaller model
+Concept: to the device,
+OpenShell enforcement
+FF-06 Projected result
+$14 → $8 per employee,
+$1.4M → $0.8M
+Concept: the on-device row
+FF-07 Close
+Sandbox, budget and receipt
+for every assistant
+Concept: whole frame
+FF-08 How it works
+Desk, data center, who sees
+the cost
+Concept: desk zone, usage
+agent, dashed limits path
+FF-04 Team view
+Finance at 11% of spend,
+employees by spend
+Concept: none
+Figma prototype flow map: Lenovo × NVIDIA art of the possible
+Eight frames, FF-01 to FF-08, as in the Figma flow requirements. Every frame carries the concept banner.
+steps finish See the company Set a policy Apply Next
+How it works	Back Finance	Back
+User 0417
+Restart
+Blue: main path · Grey: branches and back · Dashed: restart. In review mode, the elements on each card’s Concept line are tagged “Concept”; everything else is tagged “Planned”. Presentation mode hides the tags.
+
+-- 11 of 11 --
+

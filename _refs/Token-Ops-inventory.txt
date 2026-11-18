@@ -1,0 +1,102 @@
+﻿Token Ops Challenge — costs we assumed
+Sonnet 4.6 is only the starting public-cloud price. The inventory has four models. Each scenario starts on Sonnet while the switch is off, then moves to an open model on a Lenovo machine. After that move, the bill is the machine, not a Sonnet token price.
+Costs we assumed
+These are the prices the three scenarios were built on. Prices were read on 6 November 2026. A blended token price is 3 input tokens to 1 output token. A month on the rental card is 730 hours. The cloud line is tokens in the month divided by 1,000,000, times $6.
+Models
+Knob
+Model
+Price we used
+What that price is for
+Link
+700B, public cloud
+Claude Sonnet 4.6
+$3 in, $15 out, $6 blended per million tokens
+The cloud line at the start of all three
+https://platform.claude.com/docs/en/about-claude/pricing
+70B
+Llama 3.3 70B Instruct
+$0.59 in, $0.79 out, $0.64 blended per million tokens
+The open model Brightsky moves to. The slide bill is the servers, not this token rate
+https://openrouter.ai/meta-llama/llama-3.3-70b-instruct
+700B, own factory
+Llama 3.1 405B Instruct
+No token price. The bill is the H200 server
+The open model for the super agent and for claims, hosted in-house
+https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct
+8B
+Llama 3.1 8B Instruct
+$0.05 in, $0.08 out, $0.06 blended per million tokens
+Kept for the small knob. These three scenarios do not use it
+https://openrouter.ai/meta-llama/llama-3.1-8b-instruct
+The 70B and 8B prices are the Groq row on those OpenRouter pages. The same pages also show cheaper hosts. The 8B headline there is $0.02 in and $0.04 out. The 70B headline is $0.10 in and $0.32 out.
+Machines
+Machine
+Booth cost we used
+Public card
+Links
+ThinkSystem SR780a V3, 8× H100
+$30K a month
+About $36K a month, $49.24 an hour
+https://lenovopress.lenovo.com/lp1980-thinksystem-sr780a-v3-server and https://www.coreweave.com/pricing
+ThinkSystem SR780a V3, 8× H200
+$37K a month
+$36,821 a month, $50.44 an hour
+https://lenovopress.lenovo.com/lp1980-thinksystem-sr780a-v3-server and https://www.coreweave.com/pricing
+Lenovo sells the server. Lenovo does not publish the monthly figure. The monthly figure is the CoreWeave rental card, used as the booth cost. None of these models call a China API. The Llama rows are Meta open weights for self-hosting.
+Brightsky
+The chats start on Sonnet in the public cloud, with one H100 server already owned, then move to Llama 3.3 70B on two H100 servers.
+Before
+Optimized
+Model
+Sonnet 4.6
+Llama 3.3 70B
+Where it runs
+Public cloud, plus 1 idle H100 server at $30K
+2 × H100 servers
+Bill
+1,000,000 × 35,000 tokens = $210K cloud + $30K = $240K, $0.24 per chat
+$60K, $0.06 per chat
+$60K is 2 × $30K. The slide already shows $60K, 75%, and 4×. The one change is the Measure line under $0.06: "down from $0.21" becomes "down from $0.24". $0.21 was the $210K cloud slice only. The full start is $240K.
+Super agent
+The tasks start on Sonnet in the public cloud, with five H100 servers already in the bill, then stay on a large model by moving to Llama 3.1 405B on H200 servers.
+Before
+Optimized
+Model
+Sonnet 4.6
+Llama 3.1 405B
+Where it runs
+Public cloud, plus 5 × H100 at $30K
+About 6 × H200
+Bill
+500,000 × 150,000 tokens = $450K cloud + $150K = $600K, $1.20 per task
+$225K, $0.45 per task
+The large model stays, so this does not drop to 70B. Six H200 servers are 6 × $37K = $222K. The slide already shows $225K, 63%, and 2.7×. The one change is the Measure line under $0.45: "down from $0.90" becomes "down from $1.20". $0.90 was the $450K cloud slice only. The full start is $600K.
+Claims
+The claims start on Sonnet in the public cloud, with one H200 server already owned and the switch off, then move to Llama 3.1 405B on that same server.
+Before
+Optimized
+Model
+Sonnet 4.6
+Llama 3.1 405B, in-country
+Where it runs
+Public cloud, plus 1 idle H200 server
+That same H200 server
+Bill
+100,000 × 200,000 tokens = $120K cloud + $37K = $157K, $1.57 per claim
+$37K, $0.37 per claim
+The slide still shows $180K + $25K = $205K, then $34K. $25K and $34K are not the H200 price. Change the Off screen to cloud $120K, factory $37K, bill $157K, and $1.57 per claim. Change the Measure screen to a start of $157K, a setup of $37K, $0.37 per claim, down from $1.57, a 76% cut, and 4.2×.
+Coding agent
+The coding agent starts on Sonnet in the public cloud, with a ThinkStation PGX already at the desk and the switch off, and it stays on that same PGX.
+Before
+Optimized
+Model
+Sonnet 4.6
+Stays on the ThinkStation PGX
+Where it runs
+Public cloud, plus PGX at the desk
+That same ThinkStation PGX
+Bill
+$150K cloud + $4K = $154K, $0.62 per request
+No screen number changes
+The slide already shows $150K + $4K = $154K, then $0.62 a request. Leave those figures as they are. The earlier idea of moving the win to a 2× H100 server at $6K is dropped. The $4K line “PGX at the desk” stays an open question. A public listing shows the PGX at $5,859 to buy, not $4,000 a month. Links: https://lenovopress.lenovo.com/lp2321-thinkstation-pgx and https://www.avadirect.com/Lenovo-ThinkStation-PGX-AI-Supercomputer-Desktop/Configure/19671279.
+$0.21, $0.90, and $1.80 on the slides are the cloud slice alone. The inventory "down from" price is the full starting bill, cloud plus the machine.

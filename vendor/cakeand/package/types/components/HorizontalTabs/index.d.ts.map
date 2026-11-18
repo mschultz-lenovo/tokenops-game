@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../../src/hellopc/components/HorizontalTabs/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,kBAAkB,EAAE,qBAAqB,EAAE,MAAM,kBAAkB,CAAC;AAC7F,YAAY,EACV,mBAAmB,EACnB,uBAAuB,EACvB,0BAA0B,GAC3B,MAAM,kBAAkB,CAAC;AAC1B,OAAO,EAAE,iBAAiB,EAAE,MAAM,qBAAqB,CAAC;AACxD,YAAY,EAAE,sBAAsB,EAAE,MAAM,qBAAqB,CAAC"}
