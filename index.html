@@ -347,6 +347,10 @@ button:disabled{cursor:not-allowed}
   min-height:0;
 }
 .wl-custom-fields .field label{font-size:11px}
+.wl-custom-fields .field select{
+  height:40px;font-size:14px;font-weight:600;padding:0 10px;
+}
+.wl-custom-fields .field select.is-empty{color:var(--color-text-icon-placeholder)}
 .wl-custom-fields .stepper{gap:8px}
 .wl-custom-fields .stepper .field-value{
   height:40px;font-size:14px;padding:0 10px;
@@ -1912,10 +1916,10 @@ Game.prototype.renderVals = function () {
     customCard: customCard,
     customSelected: customOn,
     scene: scene,
-    unitLabel: scene.units != null
-      ? ((UNIT_OPTIONS.find(function (u) { return u.value === scene.units; }) || {}).label || scene.units)
-      : '—',
     unitEmpty: scene.units == null,
+    unitOptions: UNIT_OPTIONS.map(function (u) {
+      return { value: u.value, label: u.label, selected: scene.units === u.value };
+    }),
     volLabel: scene.monthlyVolume != null ? formatVolume(scene.monthlyVolume) : '—',
     volEmpty: scene.monthlyVolume == null,
     volSuffix: scene.monthlyVolume != null && scene.units != null ? scene.units : '',
@@ -2201,7 +2205,14 @@ function viewPick(v) {
           '<span class="cap" style="font-size: 13px; font-weight: 600">' + e(v.customCard.hint) + '</span>' +
         '</div>' +
         '<div class="wl-custom-fields">' +
-          stepper('scene-units', 'Unit', '<span class="mono">' + e(v.unitLabel) + '</span>', v.unitEmpty) +
+          '<div class="field"><label for="scene-units">Unit</label>' +
+            '<select id="scene-units" name="scene-units" data-scene="units" class="' + (v.unitEmpty ? 'is-empty' : '') + '">' +
+              '<option value=""' + (v.unitEmpty ? ' selected' : '') + '>—</option>' +
+              each(v.unitOptions, function (u) {
+                return '<option value="' + e(u.value) + '"' + (u.selected ? ' selected' : '') + '>' + e(u.label) + '</option>';
+              }) +
+            '</select>' +
+          '</div>' +
           stepper('scene-vol', 'Volume / mo',
             '<span class="mono">' + e(v.volLabel) + '</span>' + (v.volSuffix ? '<span class="suffix">' + e(v.volSuffix) + '</span>' : ''),
             v.volEmpty) +
@@ -2689,12 +2700,6 @@ function bumpFixed(d) {
   var next = FIXED_STEPS[cycleIndex(FIXED_STEPS, idx, d)];
   game.patchScene({ fixedMonthly: next });
 }
-function bumpUnits(d) {
-  var cur = game.state.scene.units;
-  var idx = cur == null ? -1 : UNIT_OPTIONS.findIndex(function (u) { return u.value === cur; });
-  var next = UNIT_OPTIONS[cycleIndex(UNIT_OPTIONS, idx, d)];
-  game.patchScene({ units: next.value, unit: next.unit });
-}
 function bumpFactory(d) {
   var cur = game.state.scene.factory;
   var idx = cur == null ? -1 : FACTORY_OPTIONS.findIndex(function (f) { return f.factory === cur; });
@@ -2707,10 +2712,23 @@ function bumpFactory(d) {
 }
 
 stage.addEventListener('change', function (ev) {
-  var el = ev.target.closest('[data-act]');
-  if (!el || el.disabled) return;
-  if (el.getAttribute('data-act') === 'board-filter') {
-    game.setBoardFilter(el.value);
+  var el = ev.target;
+  if (!el || !el.getAttribute) return;
+  if (el.getAttribute('data-scene') === 'units') {
+    ev.stopPropagation();
+    if (!el.value) {
+      game.patchScene({ units: null, unit: null });
+      return;
+    }
+    var match = UNIT_OPTIONS.find(function (u) { return u.value === el.value; });
+    if (!match) return;
+    game.patchScene({ units: match.value, unit: match.unit });
+    return;
+  }
+  var actEl = el.closest('[data-act]');
+  if (!actEl || actEl.disabled) return;
+  if (actEl.getAttribute('data-act') === 'board-filter') {
+    game.setBoardFilter(actEl.value);
   }
 });
 
@@ -2718,6 +2736,7 @@ stage.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-act]');
   if (!el || el.disabled) return;
   if (el.tagName === 'SELECT') return;
+  if (ev.target.closest('select, input, textarea') && el.getAttribute('data-act') === 'pick-custom') return;
   var act = el.getAttribute('data-act');
   if (act === 'kb-keep' || act === 'home-keep-modal' || act === 'lb-keep' || act === 'claim-keep' || act === 'finish-keep') { ev.stopPropagation(); return; }
   var i = +el.getAttribute('data-i');
@@ -2752,7 +2771,6 @@ stage.addEventListener('click', function (ev) {
     case 'flip': game.toggle(); break;
     case 'scene-vol': bumpVolume(d); break;
     case 'scene-fixed': bumpFixed(d); break;
-    case 'scene-units': bumpUnits(d); break;
     case 'scene-factory': bumpFactory(d); break;
   }
 });
