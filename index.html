@@ -155,6 +155,7 @@ button:disabled{cursor:not-allowed}
 .opt-card{
   flex:none;align-self:stretch;box-sizing:border-box;
   width:min(300px, 28vw);min-width:240px;max-width:300px;
+  height:100%;min-height:0;
   display:flex;flex-direction:column;gap:8px;justify-content:center;
   padding:14px 18px;
   border-radius:var(--radius-400);
@@ -165,6 +166,7 @@ button:disabled{cursor:not-allowed}
   color:var(--color-ai-consumer-on-fill);
   box-shadow:var(--elevation-2);
   text-align:left;
+  overflow:hidden;
 }
 .opt-card-head{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
@@ -310,10 +312,13 @@ button:disabled{cursor:not-allowed}
 .dial-row{display:flex;align-items:center;gap:var(--space-200);justify-content:center}
 .dial-row .nb{width:48px;height:48px}
 .controls-row{
+  --controls-h: clamp(200px, 24vh, 232px);
   display:flex;align-items:stretch;gap:var(--space-200);
+  flex:none;height:var(--controls-h);min-height:var(--controls-h);max-height:var(--controls-h);
   margin-left:var(--page-inset-left) !important;
   margin-right:var(--page-inset-right) !important;
   margin-bottom:12px !important;
+  overflow:hidden;box-sizing:border-box;
 }
 .controls-tray{
   flex:1;display:flex;align-items:stretch;gap:var(--space-200);
@@ -321,7 +326,7 @@ button:disabled{cursor:not-allowed}
   border-radius:var(--radius-400);
   box-shadow:var(--elevation-0);
   padding:14px 20px;
-  min-width:0;box-sizing:border-box;
+  min-width:0;min-height:0;height:100%;box-sizing:border-box;
 }
 .wl{
   background:var(--color-surfaces-container);
@@ -719,13 +724,13 @@ button:disabled{cursor:not-allowed}
 }
 .hint-slot{
   width:min(240px,22vw);min-width:180px;max-width:260px;
-  align-self:stretch;flex:none;min-height:0;box-sizing:border-box;
-  display:flex;
+  align-self:stretch;flex:none;height:100%;min-height:0;box-sizing:border-box;
+  display:flex;overflow:hidden;
 }
 .hint-slot > .hint-reveal,
 .hint-slot > .hint-card.control-hint,
 .hint-slot > .hint-win{
-  flex:1;width:100%;min-height:0;align-self:stretch;
+  flex:1;width:100%;height:100%;min-height:0;align-self:stretch;
   box-sizing:border-box;
 }
 .hint-card.control-hint{
@@ -734,6 +739,11 @@ button:disabled{cursor:not-allowed}
   gap:var(--space-100);
   padding:var(--space-250) var(--space-300);
   padding-right:40px;
+  overflow-x:hidden;overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.hint-card.control-hint .hint-body{
+  flex:none;
 }
 .hint-card.control-hint .hint-action{
   margin-top:var(--space-100);
@@ -1810,12 +1820,17 @@ Game.prototype.finish = function (mode) {
   var r = calc(w, s.v, s.m, s.p, s.t);
   var ck = checks(w, s);
   var met = ck.filter(function (x) { return x; }).length;
-  var winList = wins(w);
-  var best = winList.length
-    ? Math.min.apply(null, winList.map(function (x) { return x.per; }))
-    : r.per;
-  var full = Math.min(1000, Math.round(1000 * best / r.per));
-  var score = early ? Math.max(1, Math.round(full * (0.4 + 0.6 * met / 4))) : full;
+  var score;
+  if (met === 4) {
+    score = 1000;
+  } else {
+    var winList = wins(w);
+    var best = winList.length
+      ? Math.min.apply(null, winList.map(function (x) { return x.per; }))
+      : r.per;
+    var full = Math.min(1000, Math.round(1000 * best / r.per));
+    score = Math.max(1, Math.round(full * (0.4 + 0.6 * met / 4)));
+  }
   this.setState({
     last: Date.now(),
     kbOpen: false,
@@ -2780,7 +2795,7 @@ function viewHintSlot(v) {
 }
 
 function viewControls(v) {
-  return '<div class="controls-row" style="flex: none">' +
+  return '<div class="controls-row">' +
     viewHintSlot(v) +
     '<div class="controls-tray">' +
       each(v.knobs, function (k) {
